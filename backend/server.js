@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const mongoose = require("mongoose");
 
 const noteRouter = require("./router/note");
 
@@ -22,6 +23,14 @@ app.get("/", (req, res) => {
 app.use("/api/notes", noteRouter);
 
 const port = process.env.PORT;
-app.listen(port, () => {
-  console.log(`server started on port ${port}`);
-});
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`server started on port ${port}`);
+      console.log("database connected");
+    });
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
